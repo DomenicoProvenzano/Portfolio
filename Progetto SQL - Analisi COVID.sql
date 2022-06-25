@@ -1,64 +1,64 @@
 SELECT *
-from PortfolioProject..CovidDeaths
+FROM PortfolioProject..CovidDeaths
 WHERE continent is not null
-order by 3, 4
+ORDER BY 3, 4
 
 --SELECT *
 --from PortfolioProject..CovidVaccinations
 --order by 3, 4
 
--- Seleziono i dati che andrò a usare
+-- Seleziono i dati che andrÃ² a usare
 
 SELECT Location, Date, total_cases, new_cases, total_deaths, population
-from PortfolioProject..CovidDeaths
+FROM PortfolioProject..CovidDeaths
 WHERE continent is not null
-order by 1, 2
+ORDER BY 1, 2
 
 -- Confronto i casi totali con i decessi totali
--- Mostra la possibilità di morire se contrai il covid nel tuo Paese
+-- Mostra la possibilitÃ  di morire se contrai il covid nel tuo Paese
 
 SELECT Location, Date, total_cases, total_deaths, (total_deaths/total_cases)*100 AS DeathPercentage
-from PortfolioProject..CovidDeaths
+FROM PortfolioProject..CovidDeaths
 WHERE location like '%ital%'
-order by 1, 2
+ORDER BY 1, 2
 
 -- Confronto i casi totali vs la popolazione
 -- Mostra la percentuale di popolazione che ha preso il covid
 
 SELECT Location, Date, Population, total_cases, total_deaths, (total_cases/Population)*100 AS PercentPopulationInfected
-from PortfolioProject..CovidDeaths
+FROM PortfolioProject..CovidDeaths
 WHERE continent is not null
 --WHERE location like '%ital%'
-order by 1, 2
+ORDER BY 1, 2
 
 
--- Cerco i Paesi con il tasso di infezione più alto rispetto alla popolazione
+-- Cerco i Paesi con il tasso di infezione piÃ¹ alto rispetto alla popolazione
 
 SELECT Location, Population, MAX(total_cases) AS HighestInfectionCount, MAX((total_cases/Population))*100 AS PercentPopulationInfected
-from PortfolioProject..CovidDeaths
+FROM PortfolioProject..CovidDeaths
 --WHERE location like '%ital%'
 WHERE continent is not null
-group by location, population
-order by PercentPopulationInfected DESC
+GROUP BY location, population
+ORDER BY PercentPopulationInfected DESC
 
 -- Mostro i Paesi con il maggior numero di decessi per popolazione
 
 SELECT Location, MAX(CAST(total_deaths as int)) as TotalDeathCount
-from PortfolioProject..CovidDeaths
+FROM PortfolioProject..CovidDeaths
 --WHERE location like '%ital%'
 WHERE continent is not null
-group by location, population
-order by TotalDeathCount DESC
+GROUP BY location, population
+ORDER BY TotalDeathCount DESC
 
 
--- Mostro i Continenti con il più alto numero di decessi per popolazione
+-- Mostro i Continenti con il piÃ¹ alto numero di decessi per popolazione
 
 SELECT continent, MAX(CAST(total_deaths as int)) as TotalDeathCount
-from PortfolioProject..CovidDeaths
+FROM PortfolioProject..CovidDeaths
 --WHERE location like '%ital%'
 WHERE continent is not null
-group by continent
-order by TotalDeathCount DESC
+GROUP BY continent
+ORDER BY TotalDeathCount DESC
 
 
 -- NUMERI SU SCALA GLOBALE
@@ -82,7 +82,7 @@ ORDER  BY 1, 2
 
 
 -- Mostro la popolazione totale vs i totali vaccinati.
--- 1° Step: creo la colonna dei vaccinati a progressivo data
+-- 1Â° Step: creo la colonna dei vaccinati a progressivo data
 
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(bigint, vac.new_vaccinations)) OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) AS RollingPeopleVaccinated
@@ -94,7 +94,7 @@ WHERE dea.continent IS NOT NULL
 ORDER BY 2, 3
 
 -- Mostro la popolazione totale vs i totali vaccinati.
--- 2° Step: creo la colonna della percentuale vaccinati usando una CTE
+-- 2Â° Step: creo la colonna della percentuale vaccinati usando una CTE
 
 WITH PopVsVac (continent, location, date, population, new_vaccinations, RollingPeopleVaccinated)
 AS
